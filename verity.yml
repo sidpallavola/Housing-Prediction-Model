@@ -1,0 +1,18 @@
+model: api://openai
+label: target
+sensitive: []
+thresholds:
+  mean_prediction_diff_max: 0.05
+  calibration_diff_max: 0.05
+  error_rate_diff_max: 0.1
+dataset_metadata:
+  description: housing price prediction
+  population: Target population
+  jurisdiction: United States
+  sample_size: 1000
+  decision_type: regression
+dataset: housing_data_cleaned.csv
+model_type: api
+api_provider: openai
+policy_profile: housing_lending_hiring
+
