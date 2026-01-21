@@ -1,5 +1,5 @@
 mode: dataset_model
-model: feature_names.pkl
+model: xgboost_housing_model.pkl
 label: price
 protected_columns:
   - gender
