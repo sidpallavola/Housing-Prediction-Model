@@ -170,18 +170,32 @@ metrics:
         means 10% average error.
       scope: overall
       description: Maximum allowed Symmetric MAPE for overall model performance
-  missing_value_rates:
+  data_quality_missing_value_rate_max:
     compute: missing_value_rates
-    report: missing value rates by column
+    report: maximum missing value rate across all columns
     threshold:
-      metric_id: missing_value_rates
+      metric_id: data_quality_missing_value_rate_max
       value: 0.2
       unit: percentage
       unit_definition: >-
         Percentage (0-100 scale). Value of 0.05 means 0.05% (or 5% if value is
         5.0).
-      scope: per_column
+      scope: overall
       description: Maximum allowed missing value rate per column (20% = 0.20)
+  missing_value_rates:
+    compute: missing_value_rates
+    report: missing value rates by column
+    threshold: null
+  data_quality_schema_valid:
+    compute: schema_validation
+    report: schema consistency checks
+    threshold:
+      metric_id: data_quality_schema_valid
+      value: true
+      unit: boolean
+      unit_definition: Boolean value. True means schema is valid, False means invalid.
+      scope: overall
+      description: Schema must be valid (dataset loaded successfully)
   schema_validation:
     compute: schema_validation
     report: schema consistency checks
@@ -203,6 +217,19 @@ metrics:
       description: >-
         Maximum allowed Kolmogorov-Smirnov distance for distribution shifts
         (current vs training set)
+  train_test_leakage_detected:
+    compute: train_test_leakage
+    report: train/test data leakage detection
+    evaluation:
+      requires_splits: true
+      detection_method: statistical_overlap
+    threshold:
+      metric_id: train_test_leakage_detected
+      value: false
+      unit: boolean
+      unit_definition: Boolean value. True means leakage detected, False means no leakage.
+      scope: overall
+      description: No train/test leakage allowed (must be False)
   train_test_leakage:
     compute: train_test_leakage
     report: train/test data leakage detection
