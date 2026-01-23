@@ -1,9 +1,7 @@
 mode: dataset_model
 model: xgboost_housing_model.pkl
 label: price
-protected_columns:
-  - gender
-  - age
+protected_columns: []
 dataset: housing_data_cleaned.csv
 task_type: regression
 sector: housing
