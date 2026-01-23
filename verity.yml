@@ -4,7 +4,7 @@ label: price
 protected_columns:
   - gender
   - age
-dataset: housing_cleaned_data.csv
+dataset: housing_data_cleaned.csv
 task_type: regression
 sector: housing
 decision_type: pricing
