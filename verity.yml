@@ -4,7 +4,7 @@ label: price
 protected_columns:
   - gender
   - age
-dataset: housing_data_cleaned.csv
+dataset: housing_cleaned_data.csv
 task_type: regression
 sector: housing
 decision_type: pricing
@@ -102,8 +102,50 @@ metrics:
         protected groups (relative to best group)
   overall_performance:
     compute: overall_mae_rmse
-    report: overall MAE and RMSE
+    report: overall MAE, RMSE, and normalized metrics (NRMSE, NMAE, MAPE)
     threshold: null
+  nrmse_max:
+    compute: nrmse_by_std
+    report: normalized RMSE (by target standard deviation)
+    threshold:
+      metric_id: nrmse_max
+      value: 0.12
+      unit: normalized_error
+      unit_definition: >-
+        Normalized RMSE as fraction of target standard deviation. Value of 0.15
+        means RMSE is 15% of target std.
+      scope: overall
+      description: >-
+        Maximum allowed normalized RMSE (RMSE / target_std) for overall model
+        performance
+  nmae_max:
+    compute: nmae
+    report: normalized MAE (by target mean)
+    threshold:
+      metric_id: nmae_max
+      value: 0.1
+      unit: normalized_error
+      unit_definition: >-
+        Normalized MAE as fraction of target mean. Value of 0.12 means MAE is
+        12% of target mean.
+      scope: overall
+      description: >-
+        Maximum allowed normalized MAE (MAE / target_mean) for overall model
+        performance
+  mape_max:
+    compute: mape
+    report: mean absolute percentage error
+    threshold:
+      metric_id: mape_max
+      value: 0.08
+      unit: percentage
+      unit_definition: >-
+        Mean Absolute Percentage Error (0-100 scale). Value of 0.10 means 10%
+        average error.
+      scope: overall
+      description: >-
+        Maximum allowed Mean Absolute Percentage Error for overall model
+        performance
   missing_value_rates:
     compute: missing_value_rates
     report: missing value rates by column
