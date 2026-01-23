@@ -102,11 +102,11 @@ metrics:
     compute: overall_mae_rmse
     report: overall MAE, RMSE, and normalized metrics (NRMSE, NMAE, MAPE)
     threshold: null
-  nrmse_max:
+  nrmse_by_std:
     compute: nrmse_by_std
     report: normalized RMSE (by target standard deviation)
     threshold:
-      metric_id: nrmse_max
+      metric_id: nrmse_by_std
       value: 0.12
       unit: normalized_error
       unit_definition: >-
@@ -115,6 +115,20 @@ metrics:
       scope: overall
       description: >-
         Maximum allowed normalized RMSE (RMSE / target_std) for overall model
+        performance
+  nrmse_by_mean:
+    compute: nrmse_by_mean
+    report: normalized RMSE (by target mean)
+    threshold:
+      metric_id: nrmse_by_mean
+      value: 0.12
+      unit: normalized_error
+      unit_definition: >-
+        Normalized RMSE as fraction of target mean. Value of 0.15 means RMSE is
+        15% of target mean.
+      scope: overall
+      description: >-
+        Maximum allowed normalized RMSE (RMSE / target_mean) for overall model
         performance
   nmae_max:
     compute: nmae
@@ -135,15 +149,27 @@ metrics:
     report: mean absolute percentage error
     threshold:
       metric_id: mape_max
-      value: 0.08
+      value: 8
       unit: percentage
       unit_definition: >-
-        Mean Absolute Percentage Error (0-100 scale). Value of 0.10 means 10%
+        Mean Absolute Percentage Error (0-100 scale). Value of 10.0 means 10%
         average error.
       scope: overall
       description: >-
         Maximum allowed Mean Absolute Percentage Error for overall model
         performance
+  smape_max:
+    compute: smape
+    report: symmetric mean absolute percentage error
+    threshold:
+      metric_id: smape_max
+      value: 8
+      unit: percentage
+      unit_definition: >-
+        Symmetric Mean Absolute Percentage Error (0-100 scale). Value of 10.0
+        means 10% average error.
+      scope: overall
+      description: Maximum allowed Symmetric MAPE for overall model performance
   missing_value_rates:
     compute: missing_value_rates
     report: missing value rates by column
