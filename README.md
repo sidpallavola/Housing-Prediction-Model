@@ -27,4 +27,4 @@ A machine learning-powered application for predicting housing prices. This proje
    - cd frontend
    - npm start
 
-frefer
+freferfrfre
