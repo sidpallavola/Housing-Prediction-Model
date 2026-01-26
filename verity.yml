@@ -1,8 +1,18 @@
 mode: dataset_model
+audit_intent: fairness_enforced
 model: xgboost_housing_model.pkl
 label: price
-protected_columns: []
+protected_columns: &ref_0
+  - zip_code
+  - zip_median_ppsf
+  - zip_target_encoded
 dataset: housing_data_cleaned.csv
+dataset_upload_id: 8cde4e49-60e2-4633-b37d-ff9bce9ff756
+fairness:
+  enabled: true
+  protected_columns: *ref_0
+  min_group_size: 30
+  min_groups: 2
 task_type: regression
 sector: housing
 decision_type: pricing
