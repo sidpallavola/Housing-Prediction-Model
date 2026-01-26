@@ -1,0 +1,316 @@
+mode: dataset_model
+audit_intent: fairness_enforced
+model: xgboost_housing_model.pkl
+label: price
+protected_columns: &ref_0
+  - zip_code
+  - zip_median_ppsf
+  - zip_target_encoded
+dataset_upload_id: 344f5e17-339f-4a1a-a203-df318a41d9a9
+fairness:
+  enabled: true
+  protected_columns: *ref_0
+  min_group_size: 30
+  min_groups: 2
+task_type: regression
+sector: housing
+decision_type: pricing
+domain_profile: housing_valuation
+jurisdiction: United States
+dataset_metadata:
+  description: housing price prediction
+  population: Target population
+  jurisdiction: United States
+  sample_size: 1000
+metrics:
+  mean_prediction_error_by_group:
+    compute: mean_prediction_error_by_group
+    report: per-group mean prediction errors
+    threshold:
+      metric_id: mean_prediction_error_by_group
+      value: 0.05
+      unit: normalized_difference
+      unit_definition: >-
+        Difference normalized by label range (max - min). Value of 0.05 means 5%
+        of label range.
+      scope: max_gap
+      description: >-
+        Maximum allowed difference in mean prediction error between any two
+        protected groups (normalized by label range)
+  mae_rmse_by_protected_group:
+    compute: mae_rmse_by_protected_group
+    report: MAE and RMSE per protected group
+    threshold:
+      metric_id: mae_rmse_by_protected_group
+      value: 0.1
+      unit: relative_difference
+      unit_definition: >-
+        Relative difference as percentage of baseline group. Value of 0.10 means
+        10% relative difference.
+      scope: max_gap
+      description: >-
+        Maximum allowed relative difference in error rate (MAE/RMSE) between any
+        two protected groups (relative to best group)
+  over_under_estimation_bias:
+    compute: over_under_estimation_bias
+    report: systematic over/under-estimation by group
+    threshold:
+      metric_id: over_under_estimation_bias
+      value: 0.05
+      unit: normalized_difference
+      unit_definition: >-
+        Difference normalized by label range (max - min). Value of 0.05 means 5%
+        of label range.
+      scope: max_gap
+      description: >-
+        Maximum allowed systematic valuation bias between groups (normalized by
+        label range)
+  residual_distribution_parity:
+    compute: residual_distribution_parity
+    report: residual distribution statistics by group
+    threshold:
+      metric_id: residual_distribution_parity
+      value: 0.05
+      unit: statistical_distance
+      unit_definition: >-
+        Kolmogorov-Smirnov distance (0-1 scale). Value of 0.10 means 10% maximum
+        difference in CDFs.
+      scope: max_gap
+      description: >-
+        Maximum allowed Kolmogorov-Smirnov distance in residual distributions
+        between groups
+  worst_group_error_analysis:
+    compute: worst_group_error_analysis
+    report: error metrics for worst-performing group
+    threshold:
+      metric_id: worst_group_error_analysis
+      value: 1.2
+      unit: ratio
+      unit_definition: >-
+        Ratio between two values. Value of 0.80 means one group can be at most
+        80% of another.
+      scope: worst_to_best_ratio
+      description: >-
+        Maximum allowed ratio of worst-group error to best-group error (1.20 =
+        20% worse allowed)
+  performance_by_group:
+    compute: performance_by_group
+    report: performance metrics per protected group
+    threshold:
+      metric_id: performance_by_group
+      value: 0.1
+      unit: relative_difference
+      unit_definition: >-
+        Relative difference as percentage of baseline group. Value of 0.10 means
+        10% relative difference.
+      scope: max_gap
+      description: >-
+        Maximum allowed relative difference in performance between any two
+        protected groups (relative to best group)
+  overall_performance:
+    compute: overall_mae_rmse
+    report: overall MAE, RMSE, and normalized metrics (NRMSE, NMAE, MAPE)
+    threshold: null
+  nrmse_by_std:
+    compute: nrmse_by_std
+    report: normalized RMSE (by target standard deviation)
+    threshold:
+      metric_id: nrmse_by_std
+      value: 0.12
+      unit: normalized_error
+      unit_definition: >-
+        Normalized RMSE as fraction of target standard deviation. Value of 0.15
+        means RMSE is 15% of target std.
+      scope: overall
+      description: >-
+        Maximum allowed normalized RMSE (RMSE / target_std) for overall model
+        performance
+  nrmse_by_mean:
+    compute: nrmse_by_mean
+    report: normalized RMSE (by target mean)
+    threshold:
+      metric_id: nrmse_by_mean
+      value: 0.12
+      unit: normalized_error
+      unit_definition: >-
+        Normalized RMSE as fraction of target mean. Value of 0.15 means RMSE is
+        15% of target mean.
+      scope: overall
+      description: >-
+        Maximum allowed normalized RMSE (RMSE / target_mean) for overall model
+        performance
+  nmae_max:
+    compute: nmae
+    report: normalized MAE (by target mean)
+    threshold:
+      metric_id: nmae_max
+      value: 0.1
+      unit: normalized_error
+      unit_definition: >-
+        Normalized MAE as fraction of target mean. Value of 0.12 means MAE is
+        12% of target mean.
+      scope: overall
+      description: >-
+        Maximum allowed normalized MAE (MAE / target_mean) for overall model
+        performance
+  mape_max:
+    compute: mape
+    report: mean absolute percentage error
+    threshold:
+      metric_id: mape_max
+      value: 8
+      unit: percentage
+      unit_definition: >-
+        Mean Absolute Percentage Error (0-100 scale). Value of 10.0 means 10%
+        average error.
+      scope: overall
+      description: >-
+        Maximum allowed Mean Absolute Percentage Error for overall model
+        performance
+  smape_max:
+    compute: smape
+    report: symmetric mean absolute percentage error
+    threshold:
+      metric_id: smape_max
+      value: 8
+      unit: percentage
+      unit_definition: >-
+        Symmetric Mean Absolute Percentage Error (0-100 scale). Value of 10.0
+        means 10% average error.
+      scope: overall
+      description: Maximum allowed Symmetric MAPE for overall model performance
+  data_quality_missing_value_rate_max:
+    compute: missing_value_rates
+    report: maximum missing value rate across all columns
+    threshold:
+      metric_id: data_quality_missing_value_rate_max
+      value: 0.2
+      unit: percentage
+      unit_definition: >-
+        Percentage (0-100 scale). Value of 0.05 means 0.05% (or 5% if value is
+        5.0).
+      scope: overall
+      description: Maximum allowed missing value rate per column (20% = 0.20)
+  missing_value_rates:
+    compute: missing_value_rates
+    report: missing value rates by column
+    threshold: null
+  data_quality_schema_valid:
+    compute: schema_validation
+    report: schema consistency checks
+    threshold:
+      metric_id: data_quality_schema_valid
+      value: true
+      unit: boolean
+      unit_definition: Boolean value. True means schema is valid, False means invalid.
+      scope: overall
+      description: Schema must be valid (dataset loaded successfully)
+  schema_validation:
+    compute: schema_validation
+    report: schema consistency checks
+    threshold: null
+  distribution_shifts:
+    compute: distribution_shifts
+    report: feature and label distribution shifts (current vs baseline)
+    evaluation:
+      baseline_source: train_set
+      comparison_method: kolmogorov_smirnov
+    threshold:
+      metric_id: distribution_shifts
+      value: 0.1
+      unit: statistical_distance
+      unit_definition: >-
+        Kolmogorov-Smirnov distance (0-1 scale). Value of 0.10 means 10% maximum
+        difference in CDFs.
+      scope: per_feature
+      description: >-
+        Maximum allowed Kolmogorov-Smirnov distance for distribution shifts
+        (current vs training set)
+  train_test_leakage_detected:
+    compute: train_test_leakage
+    report: train/test data leakage detection
+    evaluation:
+      requires_splits: true
+      detection_method: statistical_overlap
+    threshold:
+      metric_id: train_test_leakage_detected
+      value: false
+      unit: boolean
+      unit_definition: Boolean value. True means leakage detected, False means no leakage.
+      scope: overall
+      description: No train/test leakage allowed (must be False)
+  train_test_leakage:
+    compute: train_test_leakage
+    report: train/test data leakage detection
+    evaluation:
+      requires_splits: true
+      detection_method: statistical_overlap
+    threshold: null
+  feature_importance:
+    compute: feature_importance
+    report: feature importance scores
+    threshold: null
+  proxy_detection:
+    compute: proxy_detection
+    report: detected proxy features for protected attributes
+    evaluation:
+      requires_protected_columns: true
+      detection_method: correlation_analysis
+    threshold:
+      metric_id: proxy_detection
+      value: 0.8
+      unit: correlation_coefficient
+      unit_definition: >-
+        Pearson correlation coefficient (-1 to 1). Value of 0.80 means 80%
+        correlation.
+      scope: per_feature
+      description: >-
+        Maximum allowed Pearson correlation between feature and protected
+        attribute (proxy detection)
+  sensitive_leakage_detection:
+    compute: sensitive_leakage_detection
+    report: sensitive attribute information leakage
+    evaluation:
+      requires_protected_columns: true
+      detection_method: mutual_information
+    threshold:
+      metric_id: sensitive_leakage_detection
+      value: 0.1
+      unit: mutual_information
+      unit_definition: >-
+        Mutual information in bits. Value of 0.10 means 0.10 bits of shared
+        information.
+      scope: per_feature
+      description: >-
+        Maximum allowed mutual information between feature and sensitive
+        attribute (in bits)
+  noise_sensitivity:
+    compute: noise_sensitivity
+    report: model sensitivity to input noise
+    robustness:
+      noise_level: 0.05
+      noise_distribution: gaussian
+      affected_features: all
+    threshold:
+      metric_id: noise_sensitivity
+      value: 0.15
+      unit: relative_degradation
+      unit_definition: >-
+        Relative performance degradation as percentage. Value of 0.15 means 15%
+        degradation allowed.
+      scope: overall
+      description: >-
+        Maximum allowed relative performance degradation under 5% Gaussian noise
+        (relative to baseline performance)
+  subgroup_stability:
+    compute: subgroup_stability
+    report: performance stability across subgroups
+    threshold:
+      metric_id: subgroup_stability
+      value: 0.85
+      unit: stability_coefficient
+      unit_definition: >-
+        Stability coefficient (0-1 scale). Value of 0.85 means 85% stability
+        required.
+      scope: min_across_subgroups
+      description: Minimum required stability coefficient across all subgroups (0-1 scale)
